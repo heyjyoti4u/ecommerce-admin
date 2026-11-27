@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/auth'
+import { getAdminSupabase } from '@/lib/supabase/admin'
+export async function PATCH(request:Request,{params}:{params:Promise<{id:string}>}){try{await requireAdmin();const {id}=await params,b=await request.json();if(typeof b.active!=='boolean')return NextResponse.json({error:'Invalid active state'},{status:400});const {data,error}=await getAdminSupabase().from('products').update({active:b.active}).eq('id',id).select('id,active').single();if(error)throw error;return NextResponse.json({ok:true,product:data})}catch(e){const m=e instanceof Error?e.message:'Could not change product status';return NextResponse.json({error:m},{status:m==='UNAUTHORIZED'?401:400})}}
