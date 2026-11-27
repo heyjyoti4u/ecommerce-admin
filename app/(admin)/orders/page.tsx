@@ -1,0 +1,4 @@
+import OrdersGrid from '@/components/orders-grid'
+import { getAdminSupabase } from '@/lib/supabase/admin'
+export const dynamic='force-dynamic'
+export default async function OrdersPage(){const {data,error}=await getAdminSupabase().from('orders').select('id,order_number,total,subtotal,shipping,status,payment_status,payment_method,tracking_number,courier_partner,created_at,customer_profiles(full_name,email,phone,address,city,state,postal_code),order_items(product_name,unit_price,size,color,quantity,line_total)').order('created_at',{ascending:false}).limit(500);if(error)throw new Error(error.message);return <div className="page-wrap"><div className="page-heading"><div><p className="eyebrow">FULFILMENT</p><h1>Orders</h1><p className="muted">Update order stages and dispatch details.</p></div></div><OrdersGrid initialOrders={data??[]}/></div>}
