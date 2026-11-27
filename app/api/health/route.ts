@@ -1,0 +1,3 @@
+import { NextResponse } from 'next/server'
+import { getAdminSupabase } from '@/lib/supabase/admin'
+export async function GET(){try{const db=getAdminSupabase(),[{error:p},{error:o},{error:i}]=await Promise.all([db.from('products').select('id',{head:true,count:'exact'}),db.from('orders').select('id',{head:true,count:'exact'}),db.from('product_inventory').select('product_id',{head:true,count:'exact'})]);if(p||o||i)throw p||o||i;return NextResponse.json({ok:true,connected:true})}catch(e){return NextResponse.json({ok:false,error:e instanceof Error?e.message:'Database unavailable'},{status:503})}}
