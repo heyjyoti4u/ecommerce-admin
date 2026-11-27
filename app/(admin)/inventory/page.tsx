@@ -1,0 +1,4 @@
+import InventoryGrid from '@/components/inventory-grid'
+import { getAdminSupabase } from '@/lib/supabase/admin'
+export const dynamic='force-dynamic'
+export default async function InventoryPage(){const db=getAdminSupabase(),[{data:products,error:p},{data:stock,error:s}]=await Promise.all([db.from('products').select('id,name,sizes,colors,active').order('name'),db.from('product_inventory').select('product_id,size,color,stock_on_hand,updated_at').order('updated_at',{ascending:false})]);if(p)throw new Error(p.message);if(s)throw new Error(s.message);return <div className="page-wrap"><div className="page-heading"><div><p className="eyebrow">STOCK CONTROL</p><h1>Inventory</h1><p className="muted">Available units by size and colour.</p></div></div><InventoryGrid products={products??[]} inventory={stock??[]}/></div>}
