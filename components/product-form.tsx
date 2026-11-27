@@ -13,7 +13,7 @@ export default function ProductForm({product,inventory=[]}:{product?:ProductData
  const [busy,setBusy]=useState(false),[error,setError]=useState('')
  async function upload(file:File,folder:string){if(!file.type.startsWith('image/')||file.size>8*1024*1024)throw new Error('Choose an image under 8 MB.');const db=getBrowserSupabase(),ext=file.name.split('.').pop()?.toLowerCase()||'jpg',path='products/'+(form.id||'new')+'/'+folder+'/'+crypto.randomUUID()+'.'+ext;const {error}=await db.storage.from('product-images').upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;return db.storage.from('product-images').getPublicUrl(path).data.publicUrl}
  async function submit(e:FormEvent){e.preventDefault();setBusy(true);setError('');try{
-  const inventoryRows=Object.entries(stock).filter(([,v])=>v!=='').map(([key,v])=>{const [size,color]=key.split('||');return{size,color,stock_on_hand:Number(v)}})
+  const inventoryRows=form.sizes.flatMap((size:string)=>form.colors.map((color:string)=>({size,color,stock_on_hand:stock[size+'||'+color]===''||stock[size+'||'+color]===undefined?null:Number(stock[size+'||'+color])})))
   const body={...form,price:Number(form.price),old_price:form.old_price===''?null:Number(form.old_price),variant_images:galleries,inventory:inventoryRows}
   const r=await fetch('/api/products',{method:editing?'PATCH':'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}),d=await r.json();if(!r.ok)throw new Error(d.error??'Save failed.')
   router.push('/products');router.refresh()
