@@ -1,0 +1,5 @@
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Trash2 } from 'lucide-react'
+export default function DeleteButton({id}:{id:string}){const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState('');async function remove(){if(!window.confirm('Remove this product? Historical products will be archived.'))return;setBusy(true);setError('');try{const r=await fetch('/api/products/'+encodeURIComponent(id),{method:'DELETE'}),d=await r.json();if(!r.ok)throw new Error(d.error??'Delete failed');router.push('/products');router.refresh()}catch(e){setError(e instanceof Error?e.message:'Delete failed')}finally{setBusy(false)}}return <div>{error&&<p className="notice error">{error}</p>}<button className="danger-button" onClick={remove} disabled={busy}><Trash2 size={15}/>{busy?'Removing…':'Remove product'}</button></div>}
