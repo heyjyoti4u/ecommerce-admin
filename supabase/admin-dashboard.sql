@@ -5,15 +5,16 @@
 
 begin;
 
--- Staff authorization table. No direct client access; dashboard authorization
--- is currently additionally guarded by ADMIN_USER_IDS on the server.
+-- Staff authorization table. Direct client access is denied; server-side dashboard code
+-- verifies the signed-in Supabase Auth user and requires an explicit staff row.
 create table if not exists public.admin_users (
   user_id uuid primary key references auth.users(id) on delete cascade,
   role text not null default 'admin' check (role in ('owner','admin','staff')),
   created_at timestamptz not null default now()
 );
 alter table public.admin_users enable row level security;
-revoke all on public.admin_users from public, anon, authenticated, service_role;
+revoke all on public.admin_users from public, anon, authenticated;
+grant select, insert, update, delete on public.admin_users to service_role;
 
 -- Product gallery storage for dashboard uploads.
 insert into storage.buckets (id,name,public,file_size_limit,allowed_mime_types)
