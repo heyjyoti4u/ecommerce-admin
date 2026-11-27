@@ -9,7 +9,7 @@ This app connects to the **same Supabase project** as the ORO storefront. It rea
 - `NEXT_PUBLIC_SUPABASE_URL`: same project URL as storefront
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: same anon/publishable key as storefront
 - `SUPABASE_SERVICE_ROLE_KEY`: same project service-role key (server-only; never prefix with NEXT_PUBLIC)
-- `ADMIN_USER_IDS`: comma-separated Supabase Auth UUID(s) permitted to access the dashboard
+Staff access is assigned by an owner/admin from the Staff Access screen. The server checks `public.admin_users` on every protected request.
 - `NEXT_PUBLIC_STORE_URL`: storefront URL
 
 Use the same Supabase Auth project. Only accounts whose Auth UUID appears in ADMIN_USER_IDS can access the dashboard. Never share the service-role key with employees.
