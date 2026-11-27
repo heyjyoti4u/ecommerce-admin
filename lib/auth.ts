@@ -17,12 +17,11 @@ export async function getCurrentAdmin() {
   const { data: { user }, error } = await authClient.auth.getUser()
   if (error || !user) return null
 
-  const allowedIds = (process.env.ADMIN_USER_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean)
-  if (!allowedIds.includes(user.id)) return null
-
   const admin = getAdminSupabase()
+  const { data: staff } = await admin.from('admin_users').select('user_id,role').eq('user_id', user.id).maybeSingle()
+  if (!staff) return null
   const { data: profile } = await admin.from('customer_profiles').select('id,email,full_name').eq('user_id', user.id).maybeSingle()
-  return { id: user.id, email: user.email ?? '', name: profile?.full_name || user.email || 'ORO staff' }
+  return { id: user.id, email: user.email ?? '', name: profile?.full_name || user.email || 'ORO staff', role: staff.role }
 }
 
 export async function requireAdmin() {
