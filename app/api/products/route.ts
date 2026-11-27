@@ -16,7 +16,7 @@ function validate(body:any, creating:boolean) {
  if(!name||!categories.includes(category)||!Number.isFinite(price)||price<0||!text(body.image)||!text(body.alt,300)||!text(body.description,2000)||!sizes.length||!colors.length)throw new Error('Complete all required product fields.')
  if(oldPrice!==null&&(!Number.isFinite(oldPrice)||oldPrice<price))throw new Error('Compare-at price must be higher than selling price.')
  for(const [color,urls] of Object.entries(images)){if(!colors.includes(color)||!Array.isArray(urls)||(urls as any[]).some(url=>typeof url!=='string'||url.length>1600))throw new Error('Invalid variant image gallery.')}
- for(const row of inventory){if(!sizes.includes(row.size)||!colors.includes(row.color)||!Number.isInteger(Number(row.stock_on_hand))||Number(row.stock_on_hand)<0)throw new Error('Invalid stock row.')}
+ for(const row of inventory){if(!sizes.includes(row.size)||!colors.includes(row.color)||(row.stock_on_hand!==null&&(!Number.isInteger(Number(row.stock_on_hand))||Number(row.stock_on_hand)<0)))throw new Error('Invalid stock row.')}
  return {id,name,category,price,old_price:oldPrice,image:text(body.image),alt:text(body.alt,300),description:text(body.description,2000),sizes,colors,badge:text(body.badge,80)||null,variant_images:images,active:Boolean(body.active),inventory}
 }
 async function save(body:any,creating:boolean) {
@@ -25,6 +25,7 @@ async function save(body:any,creating:boolean) {
  const result=creating?await db.from('products').insert(product):await db.from('products').update(product).eq('id',product.id)
  if(result.error)throw result.error
  for(const row of inventory){
+  if(row.stock_on_hand===null){const {error}=await db.from('product_inventory').delete().eq('product_id',product.id).eq('size',row.size).eq('color',row.color);if(error)throw error;continue}
   const {error}=await db.from('product_inventory').upsert({product_id:product.id,size:row.size,color:row.color,stock_on_hand:Number(row.stock_on_hand),updated_at:new Date().toISOString()},{onConflict:'product_id,size,color'})
   if(error)throw error
  }
