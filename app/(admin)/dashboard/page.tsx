@@ -1,4 +1,5 @@
 import { getAdminSupabase } from '@/lib/supabase/admin'
+import type { ReactNode } from 'react'
 import { formatINR } from '@/lib/format'
 import { Package, ShoppingCart, IndianRupee, Clock3 } from 'lucide-react'
 
@@ -27,4 +28,4 @@ export default async function DashboardPage() {
     </section>
   </div>
 }
-function Metric({title,value,icon}:{title:string;value:string;icon:React.ReactNode}){return <section className="metric-card"><span>{icon}</span><p>{title}</p><strong>{value}</strong></section>}
+function Metric({title,value,icon}:{title:string;value:string;icon:ReactNode}){return <section className="metric-card"><span>{icon}</span><p>{title}</p><strong>{value}</strong></section>}
