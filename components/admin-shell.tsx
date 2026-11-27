@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { LayoutDashboard, Package, ShoppingCart, Users, Boxes, Settings, LogOut, ExternalLink } from 'lucide-react'
+import { LayoutDashboard, Package, ShoppingCart, Users, Boxes, UserCog, LogOut, ExternalLink } from 'lucide-react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
 const nav = [
@@ -11,6 +11,7 @@ const nav = [
   { href:'/orders', label:'Orders', icon:ShoppingCart },
   { href:'/inventory', label:'Inventory', icon:Boxes },
   { href:'/customers', label:'Customers', icon:Users },
+  { href:'/staff', label:'Staff access', icon:UserCog },
 ]
 export default function AdminShell({admin,children}:{admin:{name:string;email:string};children:ReactNode}) {
   const path=usePathname(), router=useRouter()
