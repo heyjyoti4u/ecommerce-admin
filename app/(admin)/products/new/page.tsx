@@ -1,0 +1,2 @@
+import ProductForm from '@/components/product-form'
+export default function NewProductPage(){return <div className="page-wrap narrow"><div className="page-heading"><div><p className="eyebrow">CATALOGUE</p><h1>Add product</h1><p className="muted">Create a product in the shared ORO catalogue.</p></div></div><ProductForm/></div>}
