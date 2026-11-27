@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
+import type { ReactNode } from 'react'
 import { LayoutDashboard, Package, ShoppingCart, Users, Boxes, Settings, LogOut, ExternalLink } from 'lucide-react'
 import { getBrowserSupabase } from '@/lib/supabase/browser'
 
@@ -11,7 +12,7 @@ const nav = [
   { href:'/inventory', label:'Inventory', icon:Boxes },
   { href:'/customers', label:'Customers', icon:Users },
 ]
-export default function AdminShell({admin,children}:{admin:{name:string;email:string};children:React.ReactNode}) {
+export default function AdminShell({admin,children}:{admin:{name:string;email:string};children:ReactNode}) {
   const path=usePathname(), router=useRouter()
   async function signOut(){await getBrowserSupabase().auth.signOut();router.replace('/login');router.refresh()}
   return <div className="admin-app">
