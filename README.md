@@ -12,7 +12,20 @@ This app connects to the **same Supabase project** as the ORO storefront. It rea
 Staff access is assigned by an owner/admin from the Staff Access screen. The server checks `public.admin_users` on every protected request.
 - `NEXT_PUBLIC_STORE_URL`: storefront URL
 
-Use the same Supabase Auth project. Only accounts whose Auth UUID appears in ADMIN_USER_IDS can access the dashboard. Never share the service-role key with employees.
+Use the same Supabase Auth project. The dashboard checks the `admin_users` table for every protected request. Never share the service-role key with employees.
+
+## First owner setup
+1. Create your own account through the ORO storefront using the same Supabase Auth project.
+2. In Supabase Dashboard → Authentication → Users, copy that account's UUID.
+3. After running the admin migration below, execute this once in SQL Editor, replacing the placeholder:
+
+```sql
+insert into public.admin_users (user_id, role)
+values ('YOUR_SUPABASE_AUTH_USER_UUID', 'owner')
+on conflict (user_id) do update set role = 'owner';
+```
+
+4. Sign in to the admin app using that same email/password. From Staff Access, add employees after they have registered their own ORO account. Give them the `staff` role, not `admin`, unless they should manage staff access.
 
 ## Database compatibility
 Run `supabase/admin-dashboard.sql` in the existing ORO Supabase project after the storefront migrations. It adds a product-images Storage bucket and staff upload policies. It does not reset existing commerce data.
