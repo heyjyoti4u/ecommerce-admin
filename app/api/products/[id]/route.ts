@@ -1,0 +1,4 @@
+import { NextResponse } from 'next/server'
+import { requireAdmin } from '@/lib/auth'
+import { getAdminSupabase } from '@/lib/supabase/admin'
+export async function DELETE(_request:Request,{params}:{params:Promise<{id:string}>}){try{await requireAdmin();const {id}=await params,db=getAdminSupabase();const {count,error}=await db.from('order_items').select('id',{count:'exact',head:true}).eq('product_id',id);if(error)throw error;if((count??0)>0){const {error:e}=await db.from('products').update({active:false}).eq('id',id);if(e)throw e;return NextResponse.json({ok:true,archived:true})}const {error:e}=await db.from('products').delete().eq('id',id);if(e)throw e;return NextResponse.json({ok:true,archived:false})}catch(e){const m=e instanceof Error?e.message:'Could not remove product';return NextResponse.json({error:m},{status:m==='UNAUTHORIZED'?401:400})}}
